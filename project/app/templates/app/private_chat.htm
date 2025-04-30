@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Private Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: #4a90e2;
+      color: white;
+      font-size: 18px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .chat-box {
+      flex-grow: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #fafafa;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      max-width: 80%;
+      padding: 10px;
+      border-radius: 15px;
+      clear: both;
+    }
+
+    .message.you {
+      background: #d1e7ff;
+      align-self: flex-end;
+      float: right;
+    }
+
+    .message.other {
+      background: #eee;
+      align-self: flex-start;
+      float: left;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 0 0 0 8px;
+      font-size: 16px;
+    }
+
+    .chat-input button {
+      padding: 10px 20px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 0 0 8px 0;
+      cursor: pointer;
+    }
+
+    .back-link {
+      padding: 10px;
+      text-align: center;
+      background: #f9f9f9;
+      border-top: 1px solid #ddd;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #4a90e2;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      Chatting with {{ other_user.username }}
+    </div>
+
+    <div class="chat-box" id="chat-box">
+        
+    </div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Type your message..." id="message-input">
+      <button type="submit" onclick="sendMessage()">Send</button>
+    </div>
+
+    <div class="back-link">
+      <a href="{% url 'index' %}">← Back to User List</a>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('message-input');
+      const message = input.value.trim();
+      if (message === '') return;
+
+      const chatBox = document.getElementById('chat-box');
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message', 'you');
+      msgDiv.innerText = message;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = '';
+    }
+  </script>
+</body>
+</html>

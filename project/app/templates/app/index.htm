@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Users List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    a {
+      text-decoration: none;
+      color: #4a90e2;
+      font-weight: bold;
+    }
+    .group-chat-link {
+      display: block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ request.user.username }}</h2>
+        <h3>Start a chat with:</h3>
+        <ul>
+          {% for user in users %}
+            <li>
+              <a href="{% url 'private-chat' user.username %}">{{ user.username }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'chat-page' %}" class="group-chat-link">Go to Group Chat</a>
+      </div>
+      
+</body>
+</html>
