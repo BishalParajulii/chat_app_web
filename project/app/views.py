@@ -22,8 +22,10 @@ def users_list(request):
 
 
 
-def private_chat(request, username):
+
+@login_required
+def private_chat_view(request, username):
     other_user = get_object_or_404(User, username=username)
-    return render(request, "app/private_chat.htm", {
-        "other_user": other_user,
+    return render(request, 'app/private_chat.htm', {
+        'other_user': other_user,
     })

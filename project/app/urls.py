@@ -7,6 +7,6 @@ urlpatterns = [
     path("home/", views.chatPage, name="chat-page"),
     path("", LoginView.as_view(template_name="app/LoginPage.htm"), name="login-user"),
     path("auth/logout/", LogoutView.as_view(), name="logout-user"),
-    path("chat/<str:username>/", views.private_chat, name="private-chat"),
+    path("chat/<str:username>/", views.private_chat_view, name="private-chat"),
 
 ]

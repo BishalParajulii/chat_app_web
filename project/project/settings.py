@@ -1,6 +1,7 @@
 
 
 from pathlib import Path
+from channels.auth import AuthMiddlewareStack
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
-    "channels"
+    "channels",
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

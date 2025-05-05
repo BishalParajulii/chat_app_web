@@ -4,38 +4,134 @@
   <meta charset="UTF-8" />
   <title>Users List</title>
   <style>
+    :root {
+      --primary-color: #6a11cb;
+      --secondary-color: #2575fc;
+    }
+  
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f4f4f4;
       padding: 30px;
     }
+  
+    header {
+      background: linear-gradient(270deg, var(--primary-color), var(--secondary-color));
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+  
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  
     .container {
       max-width: 600px;
-      margin: auto;
+      margin: 30px auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+  
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+      color: #555;
     }
     ul {
       list-style: none;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
+    
     li {
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
     }
+    
+    li:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    li a {
+      display: block;
+      padding: 15px 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    li a:hover {
+      background-color: #e6f0ff;
+      color: #1d4ed8;
+    }    
+  
     a {
       text-decoration: none;
       color: #4a90e2;
       font-weight: bold;
+      transition: color 0.2s ease;
     }
+  
+    a:hover {
+      color: #003e9f;
+    }
+  
     .group-chat-link {
       display: block;
       margin-top: 20px;
+      padding: 10px 15px;
+      text-align: center;
+      background-color: #4a90e2;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+  
+    .group-chat-link:hover {
+      background-color: #3a6fc2;
     }
   </style>
+  
 </head>
 <body>
+  <header>
+    💬 Hamro Chat | Welcome, {{ request.user }}!
+  </header>  
     <div class="container">
         <h2>Welcome, {{ request.user.username }}</h2>
         <h3>Start a chat with:</h3>

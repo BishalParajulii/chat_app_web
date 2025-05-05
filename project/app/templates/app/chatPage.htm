@@ -2,164 +2,397 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Chat Page</title>
+    <title>Chat Room</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f4f6f8;
+      :root {
+        --primary-color: #6b48ff;
+        --secondary-color: #5a3fd6;
+        --background-color: #f0f4f8;
+        --card-bg: #ffffff;
+        --text-color: #1a202c;
+        --muted-text: #718096;
+        --accent-color: #ff6b6b;
+        --bubble-received: #e6e8eb;
+        --bubble-sent: #6b48ff;
+      }
+
+      * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
 
-      header {
-        background: #4a90e2;
-        color: white;
-        padding: 20px 0;
-        text-align: center;
-        font-size: 24px;
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
 
       .container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 30px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .logout {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .logout a {
-        color: #e74c3c;
-        text-decoration: none;
-        font-weight: bold;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: var(--card-bg);
+        border-radius: 1.25rem;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       .chat__item__container {
-        font-size: 18px;
-        min-height: 150px;
-        max-height: 300px;
+        flex: 1;
+        max-height: 500px;
         overflow-y: auto;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background: #fafafa;
-        margin-bottom: 20px;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--muted-text) transparent;
+      }
+
+      .chat__item__container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat__item__container::-webkit-scrollbar-thumb {
+        background: var(--muted-text);
+        border-radius: 3px;
+      }
+
+      .input-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        background: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        flex-wrap: wrap;
+      }
+
+      /* Facebook-like file input style */
+      .file-upload-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
+      .file-upload-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background-color: #e4e6eb;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #050505;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
+      }
+
+      .file-upload-label:hover {
+        background-color: #d8dadf;
+      }
+
+      #id_file_input {
+        display: none;
       }
 
       input[type="text"] {
-        width: 75%;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-right: 10px;
+        flex: 1;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.95rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
         outline: none;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(107, 72, 255, 0.1);
       }
 
       button {
-        padding: 12px 20px;
-        font-size: 16px;
-        background-color: #4a90e2;
+        padding: 0.85rem 1.75rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        background: var(--primary-color);
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 0.75rem;
         cursor: pointer;
-        transition: background 0.3s ease;
+        transition: background 0.3s, transform 0.2s;
       }
 
       button:hover {
-        background-color: #357ab8;
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+      }
+
+      /* Messages */
+      .message-container {
+        display: flex;
+        margin-bottom: 1.25rem;
+      }
+
+      .message-container.sent {
+        justify-content: flex-end;
       }
 
       .message {
-        margin-bottom: 10px;
-        padding: 8px 12px;
-        background: #f1f1f1;
-        border-radius: 6px;
+        max-width: 70%;
+        padding: 0.75rem 1.25rem;
+        background: var(--bubble-received);
+        border-radius: 1rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        position: relative;
+        transition: transform 0.2s;
+      }
+
+      .message.sent {
+        background: var(--bubble-sent);
+        color: white;
+      }
+
+      .message:hover {
+        transform: translateY(-2px);
       }
 
       .message strong {
-        color: #333;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .message-content {
+        font-size: 0.95rem;
+        margin: 0.5rem 0;
+      }
+
+      .timestamp {
+        font-size: 0.7rem;
+        color: var(--muted-text);
+        text-align: right;
+        margin-top: 0.25rem;
+      }
+
+      .message.sent .timestamp {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.4s ease;
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 1.25rem;
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+        animation: slideIn 0.4s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-close {
+        color: var(--accent-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .modal-close:hover {
+        color: #e53e3e;
+      }
+
+      .modal-message {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-color);
+        white-space: pre-wrap;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideIn {
+        from { transform: translateY(-30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
       }
 
       @media screen and (max-width: 600px) {
-        input[type="text"] {
-          width: 100%;
-          margin-bottom: 10px;
+        .container {
+          margin: 1rem;
+          padding: 1rem;
         }
 
+        .input-container {
+          flex-direction: column;
+        }
+
+        input[type="text"],
         button {
           width: 100%;
+        }
+
+        .message {
+          max-width: 85%;
         }
       }
     </style>
   </head>
 
   <body>
-    <header>
-      Hello, Welcome to my chat site! {{ request.user }}
-    </header>
-
     <div class="container">
-      {% if request.user.is_authenticated %}
-      <div class="logout">
-        Logout the chat page:
-        <a href="{% url 'logout-user' %}">Logout</a>
-      </div>
-      {% endif %}
-
       <div class="chat__item__container" id="id_chat_item_container"></div>
 
-      <div style="text-align: center;">
+      <div class="input-container">
+        <div class="file-upload-wrapper">
+          <label for="id_file_input" class="file-upload-label">
+            📎
+          </label>
+          <input type="file" id="id_file_input" />
+        </div>
+
         <input type="text" id="id_message_send_input" placeholder="Type your message..." />
         <button type="submit" id="id_message_send_button">Send</button>
       </div>
     </div>
 
+    <!-- Modal for showing full message -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <span class="modal-close" id="modal-close">×</span>
+        <div class="modal-message" id="modal-message"></div>
+      </div>
+    </div>
+
     <script>
-      const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const chatSocket = new WebSocket(protocol + "://" + window.location.host + "/ws/chat/");
 
       chatSocket.onopen = function (e) {
-        console.log("The connection was setup successfully!");
+        console.log("Connection established!");
       };
 
       chatSocket.onclose = function (e) {
-        console.log("Something unexpected happened!");
+        console.log("Connection closed unexpectedly!");
       };
 
-      document.querySelector("#id_message_send_input").focus();
-      document.querySelector("#id_message_send_input").onkeyup = function (e) {
-        if (e.keyCode == 13) {
-          document.querySelector("#id_message_send_button").click();
+      const messageInputElem = document.getElementById("id_message_send_input");
+
+      messageInputElem.focus();
+      messageInputElem.onkeyup = function (e) {
+        if (e.keyCode === 13) {
+          document.getElementById("id_message_send_button").click();
         }
       };
 
-      document.querySelector("#id_message_send_button").onclick = function (e) {
-        var messageInput = document.querySelector("#id_message_send_input").value;
-        if (messageInput.trim() !== "") {
+      document.getElementById("id_message_send_button").onclick = function (e) {
+        const message = messageInputElem.value;
+        if (message.trim() !== "") {
           chatSocket.send(
             JSON.stringify({
-              message: messageInput,
+              message: message,
               username: "{{ request.user.username }}",
             })
           );
+          messageInputElem.value = "";
         }
       };
 
+      function formatFriendlyTime(timestamp) {
+        const messageDate = new Date(timestamp);
+        const now = new Date();
+
+        const isToday = messageDate.toDateString() === now.toDateString();
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        const isYesterday = messageDate.toDateString() === yesterday.toDateString();
+
+        const options = {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        };
+
+        if (isToday) {
+          return `Today, ${messageDate.toLocaleTimeString([], options)}`;
+        } else if (isYesterday) {
+          return `Yesterday, ${messageDate.toLocaleTimeString([], options)}`;
+        } else {
+          const dateOptions = {
+            month: "short",
+            day: "numeric",
+          };
+          return `${messageDate.toLocaleDateString([], dateOptions)}, ${messageDate.toLocaleTimeString([], options)}`;
+        }
+      }
+
       chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
+        const divContainer = document.createElement("div");
+        divContainer.className = "message-container" + (data.username === "{{ request.user.username }}" ? " sent" : "");
+
         const div = document.createElement("div");
         div.className = "message";
-        div.innerHTML = `<strong>${data.username}</strong>: ${data.message}`;
-        document.querySelector("#id_message_send_input").value = "";
-        document.querySelector("#id_chat_item_container").appendChild(div);
-        div.scrollIntoView();
+        div.onclick = () => showFullMessage(data.message);
+
+        const formattedTime = formatFriendlyTime(data.timestamp);
+
+        div.innerHTML = `
+          <strong>${data.username}</strong>
+          <div class="message-content">${data.message}</div>
+          <div class="timestamp">${formattedTime}</div>
+        `;
+
+        divContainer.appendChild(div);
+        document.getElementById("id_chat_item_container").appendChild(divContainer);
+        div.scrollIntoView({ behavior: "smooth" });
+      };
+
+      function showFullMessage(message) {
+        const modal = document.getElementById("modal");
+        const modalMessage = document.getElementById("modal-message");
+
+        modalMessage.textContent = message;
+        modal.style.display = "flex";
+      }
+
+      window.onclick = function (event) {
+        const modal = document.getElementById("modal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      document.getElementById("modal-close").onclick = function () {
+        document.getElementById("modal").style.display = "none";
       };
     </script>
   </body>
