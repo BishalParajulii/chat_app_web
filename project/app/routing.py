@@ -6,7 +6,7 @@ from channels.auth import AuthMiddlewareStack
 
 websocket_urlpatterns = [
     re_path(r'ws/chat/$', consumers.ChatConsumer.as_asgi()),
-    re_path("ws/private-chat/<str:username>/", consumers.PrivateChatConsumer.as_asgi()),
+    re_path("ws/private-chat/<int:user_id>/", consumers.PrivateChatConsumer.as_asgi()),
 
 ]
 
