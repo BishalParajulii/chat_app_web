@@ -35,26 +35,46 @@
       padding: 15px;
       overflow-y: auto;
       background: #fafafa;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .date-divider {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #888;
     }
 
     .message {
-      margin-bottom: 10px;
-      max-width: 80%;
-      padding: 10px;
+      max-width: 70%;
+      margin-bottom: 12px;
+      padding: 10px 14px;
       border-radius: 15px;
-      clear: both;
+      position: relative;
+      display: inline-block;
+      word-wrap: break-word;
     }
-
     .message.you {
       background: #d1e7ff;
       align-self: flex-end;
-      float: right;
+      text-align: right;
+      border-bottom-right-radius: 0;
     }
-
+    
     .message.other {
       background: #eee;
       align-self: flex-start;
-      float: left;
+      text-align: left;
+      border-bottom-left-radius: 0;
+    }
+    
+
+    .timestamp {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      text-align: right;
     }
 
     .chat-input {
@@ -100,7 +120,7 @@
     </div>
 
     <div class="chat-box" id="chat-box">
-        
+      <!-- Messages will appear here -->
     </div>
 
     <div class="chat-input">
@@ -114,48 +134,65 @@
   </div>
 
   <script>
-    const otherUserId = "{{ other_user.id }}";  // Passed from view context
-    const currentUserId = "{{ request.user.id }}";  // Logged in user
+    const otherUserId = "{{ other_user.id }}";
+    const currentUserId = "{{ request.user.id }}";
     const chatBox = document.getElementById('chat-box');
     const input = document.getElementById('message-input');
-  
+
     const socket = new WebSocket(
       'ws://' + window.location.host + '/ws/privatechat/' + otherUserId + '/'
     );
-  
+
     socket.onmessage = function(e) {
       const data = JSON.parse(e.data);
+      const date = new Date(data.timestamp);
+      const dateString = date.toDateString();
+      const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Insert date divider if it's not already there
+      const lastDate = chatBox.querySelector('.date-divider:last-of-type');
+      if (!lastDate || lastDate.dataset.date !== dateString) {
+        const divider = document.createElement('div');
+        divider.className = 'date-divider';
+        divider.dataset.date = dateString;
+        divider.innerText = dateString;
+        chatBox.appendChild(divider);
+      }
+
       const msgDiv = document.createElement('div');
       msgDiv.classList.add('message');
-  
-      if (data.sender_id === currentUserId) {
-        msgDiv.classList.add('you');
-      } else {
-        msgDiv.classList.add('other');
-      }
-  
-      msgDiv.innerText = data.message;
+      msgDiv.classList.add(data.sender_id === currentUserId ? 'you' : 'other');
+
+      const content = document.createElement('div');
+      content.innerText = data.message;
+
+      const timestamp = document.createElement('div');
+      timestamp.className = 'timestamp';
+      timestamp.innerText = timeString;
+
+      msgDiv.appendChild(content);
+      msgDiv.appendChild(timestamp);
       chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
-  
+
     socket.onopen = function() {
       console.log('WebSocket connected');
     };
-  
+
     socket.onclose = function() {
       console.log('WebSocket disconnected');
     };
-  
+
     function sendMessage() {
       const message = input.value.trim();
       if (!message) return;
-  
+
       socket.send(JSON.stringify({
         'message': message,
         'receiver_id': otherUserId
       }));
-  
+
       input.value = '';
     }
   </script>  

@@ -1,13 +1,13 @@
-from django.urls import re_path
+from django.urls import re_path , path
 from . import consumers 
+from .views import private_chat_view
 from channels.routing import ProtocolTypeRouter , URLRouter
 from channels.auth import AuthMiddlewareStack
 
 
 websocket_urlpatterns = [
     re_path(r'ws/chat/$', consumers.ChatConsumer.as_asgi()),
-    re_path("ws/private-chat/<int:user_id>/", consumers.PrivateChatConsumer.as_asgi()),
-
+     re_path(r'^ws/privatechat/(?P<user_id>\d+)/$', consumers.PrivateChatConsumer.as_asgi()),
 ]
 
 
