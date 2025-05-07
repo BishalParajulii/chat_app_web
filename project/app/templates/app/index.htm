@@ -5,65 +5,64 @@
   <title>Users List</title>
   <style>
     :root {
-      --primary-color: #6a11cb;
-      --secondary-color: #2575fc;
+      --primary-color: #0A1128;
+      --accent-color: #FFCB05;
+      --light-bg: #fdfdfd;
+      --hover-bg: #FFF7D6;
+      --text-color: #1e293b;
     }
-  
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f4f4;
+      background-color: var(--light-bg);
       padding: 30px;
+      color: var(--text-color);
     }
-  
+
     header {
-      background: linear-gradient(270deg, var(--primary-color), var(--secondary-color));
-      background-size: 400% 400%;
-      animation: gradientShift 10s ease infinite;
-      color: #fff;
+      background-color: var(--primary-color);
+      color: var(--accent-color);
       padding: 2rem;
       text-align: center;
       font-size: 2rem;
-      font-weight: 700;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      font-weight: bold;
       border-radius: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      letter-spacing: 1px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
     }
-  
-    @keyframes gradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
-    }
-  
+
     .container {
-      max-width: 600px;
-      margin: 30px auto;
+      max-width: 700px;
+      margin: 0 auto;
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+      transition: transform 0.3s;
     }
-  
+
+    .container:hover {
+      transform: scale(1.01);
+    }
+
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-bottom: 10px;
-      color: #333;
+      color: var(--primary-color);
     }
-  
+
     h3 {
       font-size: 1.25rem;
-      margin-bottom: 15px;
-      color: #555;
+      margin-bottom: 20px;
+      color: #334155;
     }
+
     ul {
       list-style: none;
       padding: 0;
@@ -71,79 +70,70 @@
       flex-direction: column;
       gap: 12px;
     }
-    
+
     li {
-      background-color: #f9f9f9;
+      border: 2px solid var(--primary-color);
       border-radius: 10px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
       overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    
+
     li:hover {
       transform: scale(1.02);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
     }
-    
+
     li a {
       display: block;
-      padding: 15px 20px;
+      padding: 14px 18px;
       text-decoration: none;
-      color: #333;
+      color: var(--primary-color);
       font-weight: 600;
       font-size: 1.1rem;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-    
+
     li a:hover {
-      background-color: #e6f0ff;
-      color: #1d4ed8;
-    }    
-  
-    a {
-      text-decoration: none;
-      color: #4a90e2;
-      font-weight: bold;
-      transition: color 0.2s ease;
+      background-color: var(--hover-bg);
+      color: #000;
     }
-  
-    a:hover {
-      color: #003e9f;
-    }
-  
+
     .group-chat-link {
       display: block;
-      margin-top: 20px;
-      padding: 10px 15px;
+      margin-top: 25px;
+      padding: 12px;
       text-align: center;
-      background-color: #4a90e2;
-      color: white;
-      border-radius: 8px;
+      background-color: var(--accent-color);
+      color: var(--primary-color);
       font-weight: bold;
-      transition: background-color 0.3s ease;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s;
+      text-decoration: none;
     }
-  
+
     .group-chat-link:hover {
-      background-color: #3a6fc2;
+      background-color: #ffd84a;
+      transform: scale(1.03);
     }
   </style>
-  
 </head>
 <body>
   <header>
     💬 Hamro Chat | Welcome, {{ request.user }}!
   </header>  
-    <div class="container">
-        <h2>Welcome, {{ request.user.username }}</h2>
-        <h3>Start a chat with:</h3>
-        <ul>
-          {% for user in users %}
-            <li>
-              <a href="{% url 'private-chat' user.id %}">{{ user.username }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-        <a href="{% url 'chat-page' %}" class="group-chat-link">Go to Group Chat</a>
-      </div>
-      
+
+  <div class="container">
+    <h2>Hello, {{ request.user.username }}</h2>
+    <h3>Start a private chat with:</h3>
+    <ul>
+      {% for user in users %}
+        <li>
+          <a href="{% url 'private-chat' user.id %}">{{ user.username }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <a href="{% url 'chat-page' %}" class="group-chat-link">Join Group Chat</a>
+  </div>
 </body>
 </html>

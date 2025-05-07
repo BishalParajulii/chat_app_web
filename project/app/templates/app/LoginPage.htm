@@ -1,91 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Login | Chat App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Customer Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-      .login-container {
-        background-color: white;
-        padding: 40px 30px;
-        border-radius: 10px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 400px;
-      }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: #1a1a1a;
+    }
 
-      .login-container h2 {
-        margin-bottom: 25px;
-        text-align: center;
-        color: #333;
-      }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
 
-      form {
-        display: flex;
+    .left {
+      flex: 1;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+    }
+
+    .left h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+
+    .left h1 span {
+      display: block;
+    }
+
+    .left p {
+      color: red;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .right {
+      flex: 1;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 40px;
+      border-left: 1px solid #ddd;
+    }
+
+    .right h2 {
+      color: #0A1F44;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      background-color: #e0e0e0;
+    }
+
+    input[type="password"] {
+      background-color: #fff9c4;
+    }
+
+    .forgot {
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .forgot a {
+      text-decoration: none;
+      color: #0A1F44;
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #0A1F44;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #061633;
+    }
+
+    .signup {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .signup a {
+      color: red;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
         flex-direction: column;
       }
-
-      form p {
-        margin-bottom: 20px;
-      }
-
-      input[type="text"],
-      input[type="password"] {
+      .left, .right {
+        flex: none;
         width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-        margin-top: 5px;
+        padding: 30px 20px;
       }
-
-      input:focus {
-        border-color: #4a90e2;
-        outline: none;
-      }
-
-      button {
-        padding: 12px;
-        background-color: #4a90e2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-
-      button:hover {
-        background-color: #357ab8;
-      }
-
-      .footer {
-        text-align: center;
-        margin-top: 15px;
-        font-size: 14px;
-        color: #777;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="login-container">
-      <h2>Login to Continue</h2>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <h1>
+        <span>WELCOME TO</span>
+        <span>OUR CUSTOMER PORTAL</span>
+      </h1>
+      <p>Manage your accounts in a single portal</p>
+    </div>
+    <div class="right">
+      <h2>Sign in into your account</h2>
       <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
+        {{form.as_p}}
+
+
+        <div class="forgot"><a href="#">Forgot Password ?</a></div>
+
+        <button type="submit">Sign In</button>
+
+        <div class="signup">
+          Don't have an account? <a href="#">Sign Up</a>
+        </div>
       </form>
     </div>
-  </body>
+  </div>
+</body>
 </html>
