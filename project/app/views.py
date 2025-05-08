@@ -2,9 +2,6 @@ from django.shortcuts import render, redirect
 
 
 def chatPage(request, *args, **kwargs):
-    # if not request.user.is_authenticated:
-    #     return redirect("login-user")
-    # context = {}
     return render(request, "app/chatPage.htm")
 
 
@@ -26,4 +23,9 @@ def users_list(request):
 @login_required
 def private_chat_view(request, user_id):
     other_user = get_object_or_404(User, id=user_id)
-    return render(request, 'app/private_chat.htm' , {'other_user' : other_user}) 
+    return render(request, 'app/private_chat.htm', {
+        'other_user': other_user,
+        'sender_id': request.user.id,  # ✅ Pass sender_id to template
+        'request': request ,          # ✅ Optional: if you're using {{ request.user.username }} in JS
+        'sender' : request.user.username
+    })

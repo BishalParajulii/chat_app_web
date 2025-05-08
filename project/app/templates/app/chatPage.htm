@@ -119,7 +119,6 @@
         background: #132c5c;
       }
 
-      /* Message Bubbles */
       .message-container {
         display: flex;
         margin-bottom: 1rem;
@@ -167,7 +166,6 @@
         color: rgba(255, 255, 255, 0.7);
       }
 
-      /* Modal */
       .modal {
         display: none;
         position: fixed;
@@ -279,6 +277,7 @@
             JSON.stringify({
               message: message,
               username: "{{ request.user.username }}",
+              timestamp: new Date().toISOString(),
             })
           );
           inputElem.value = "";
@@ -310,10 +309,11 @@
       function formatTime(timestamp) {
         const date = new Date(timestamp);
         const now = new Date();
-        const today = now.toDateString();
-        const yesterday = new Date(now.setDate(now.getDate() - 1)).toDateString();
+        const today = new Date().toDateString();
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
 
         const options = { hour: "numeric", minute: "numeric", hour12: true };
+
         if (date.toDateString() === today) return `Today, ${date.toLocaleTimeString([], options)}`;
         if (date.toDateString() === yesterday) return `Yesterday, ${date.toLocaleTimeString([], options)}`;
         return `${date.toLocaleDateString([], { month: "short", day: "numeric" })}, ${date.toLocaleTimeString([], options)}`;
