@@ -138,33 +138,36 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 "timestamp": timezone.now().isoformat()
             }
         )
-
     async def send_message(self, event):
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
+            "type": "chat_message",  # 👈 Required for frontend to recognize
             "message": event["message"],
             "sender": event["sender"],
-            "sender_id": event["sender_id"],  # Include sender's id in the message
+            "sender_id": event["sender_id"],
             "timestamp": event["timestamp"]
         }))
 
+
     @sync_to_async
     def get_last_messages(self):
-        # Retrieve the last 50 messages between the sender and receiver
-        messages = Message.objects.filter(
-            sender__in=[self.sender, self.receiver],
-            receiver__in=[self.sender, self.receiver]
-        ).order_by('timestamp')[:50]
+        try:
+            messages = Message.objects.filter(
+                sender__in=[self.sender, self.receiver],
+                receiver__in=[self.sender, self.receiver]
+            ).order_by('timestamp')[:50]
+            return [
+                {
+                    "sender": msg.sender.username,
+                    "message": msg.message,
+                    "timestamp": msg.timestamp.isoformat(),
+                    "sender_id": msg.sender.id
+                }
+                for msg in messages
+            ]
+        except Exception as e:
+            print(f"Error fetching messages: {e}")
+            return []
 
-        return [
-            {
-                "sender": msg.sender.username,
-                "message": msg.message,
-                "timestamp": msg.timestamp.isoformat(),
-                "sender_id": msg.sender.id  # Include sender's id in each message
-            }
-            for msg in messages
-        ]
     
     @sync_to_async
     def save_message(self, sender, receiver, message):

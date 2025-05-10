@@ -1130,7 +1130,6 @@
 </html> {% endcomment %}
 
 
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -1655,422 +1654,199 @@
         to { transform: rotate(360deg); }
       }
     </style>
-  </head>
-  <body>
-    <!-- Sidebar with user list -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <button class="mobile-menu-button" id="mobile-menu-button">
-          <i class="fas fa-bars"></i>
-        </button>
-        <div class="sidebar-title">Chats</div>
-        <div>
-          <i class="fas fa-ellipsis-vertical"></i>
-        </div>
-      </div>
-      
-      <div class="search-container">
-        <input type="text" class="search-input" id="user-search" placeholder="Search or start new chat" />
-      </div>
-      
-      <div class="user-list" id="user-list">
-        <!-- User items will be populated by JavaScript -->
+</head>
+<body>
+  <!-- Sidebar with user list -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="mobile-menu-button" id="mobile-menu-button">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="sidebar-title">Chats</div>
+      <div>
+        <i class="fas fa-ellipsis-vertical"></i>
       </div>
     </div>
-    
-    <!-- Main chat area -->
-    <div class="chat-area">
-      <div class="chat-header">
-        <div class="user-avatar" id="current-chat-avatar">
-          <i class="fas fa-user"></i>
-        </div>
-        <div class="chat-header-info">
-          <div class="chat-header-name" id="current-chat-name">Select a chat</div>
-          <div class="chat-header-status" id="current-chat-status"></div>
-        </div>
-        <div class="chat-header-actions">
-          <div class="chat-header-action"><i class="fas fa-phone"></i></div>
-          <div class="chat-header-action"><i class="fas fa-video"></i></div>
-          <div class="chat-header-action"><i class="fas fa-search"></i></div>
-          <div class="chat-header-action"><i class="fas fa-ellipsis-vertical"></i></div>
-        </div>
+
+    <div class="search-container">
+      <input type="text" class="search-input" id="user-search" placeholder="Search or start new chat" />
+    </div>
+
+    <div class="user-list" id="user-list">
+      <!-- User items will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Main chat area -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <div class="user-avatar" id="current-chat-avatar">
+        <i class="fas fa-user"></i>
       </div>
-      
-      <div class="chat-container" id="chat-container">
-        <div class="no-chat-selected">
-          <i class="fas fa-comments"></i>
-          <h3>Select a chat to start messaging</h3>
-          <p>Choose a conversation from the sidebar to begin</p>
-        </div>
+      <div class="chat-header-info">
+        <div class="chat-header-name" id="current-chat-name">{{ receiver.username }}</div>
+        <div class="chat-header-status" id="current-chat-status"></div>
       </div>
-      
-      <div class="input-container">
-        <label for="id_file_input" class="file-upload-label">
-          <i class="fas fa-paperclip"></i>
-        </label>
-        <input type="file" id="id_file_input" />
-        <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-        <button id="id_message_send_button" >
-          <span id="send-button-text">Send</span>
-        </button>
+      <div class="chat-header-actions">
+        <div class="chat-header-action"><i class="fas fa-phone"></i></div>
+        <div class="chat-header-action"><i class="fas fa-video"></i></div>
+        <div class="chat-header-action"><i class="fas fa-search"></i></div>
+        <div class="chat-header-action"><i class="fas fa-ellipsis-vertical"></i></div>
       </div>
     </div>
-    
-    <!-- Modal for full message view -->
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <span class="modal-close" id="modal-close">&times;</span>
-        <div class="modal-message" id="modal-message"></div>
-      </div>
+
+    <div class="chat-container" id="chat-container">
+      <div class="spinner"></div>
     </div>
-    
-    <script>
-      // Current user data - should be set from Django template
-      const currentUser = {
-        id: {{ request.user.id }},
-        username: "{{ request.user.username }}",
-        email: "{{ request.user.email }}",
-        online: true
-      };
-      
-      // DOM elements
-      const userList = document.getElementById('user-list');
-      const userSearch = document.getElementById('user-search');
-      const chatContainer = document.getElementById('chat-container');
-      const currentChatName = document.getElementById('current-chat-name');
-      const currentChatAvatar = document.getElementById('current-chat-avatar');
-      const currentChatStatus = document.getElementById('current-chat-status');
-      const messageInput = document.getElementById('id_message_send_input');
-      const sendButton = document.getElementById('id_message_send_button');
-      const sendButtonText = document.getElementById('send-button-text');
-      const mobileMenuButton = document.getElementById('mobile-menu-button');
-      const sidebar = document.getElementById('sidebar');
-      const noChatSelected = document.querySelector('.no-chat-selected');
-      
-      // WebSocket and state variables
-      let chatSocket;
-      let currentChatId = null;
-      let currentChatUser = null;
-      let users = [];
-      let unreadCounts = {};
-      
-      // Initialize the app
-      async function init() {
-        await fetchUsers();
-        setupEventListeners();
-        
-        // If there's a hash in URL (e.g., #user-3), open that chat automatically
-        if (window.location.hash) {
-          const userId = parseInt(window.location.hash.replace('#user-', ''));
-          if (userId) {
-            const user = users.find(u => u.id === userId);
-            if (user) {
-              selectUser(user);
-            }
-          }
-        }
+
+    <div class="input-container">
+      <label for="id_file_input" class="file-upload-label">
+        <i class="fas fa-paperclip"></i>
+      </label>
+      <input type="file" id="id_file_input" />
+      <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+      <button id="id_message_send_button">
+        <span id="send-button-text">Send</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal for full message view -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="modal-close">&times;</span>
+      <div class="modal-message" id="modal-message"></div>
+    </div>
+  </div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const userList = document.getElementById("user-list");
+    const chatMessages = document.getElementById("chat-container");
+    const messageInput = document.getElementById("id_message_send_input");
+    const sendButton = document.getElementById("id_message_send_button");
+
+    const currentUser = "{{ request.user.username }}"; // Current user
+    const receiverUsername = "{{ receiver.username }}"; // User being chatted with
+    const receiverId = "{{ receiver.id }}"; // ID of user being chatted with
+
+    const chatSocket = new WebSocket(
+      `ws://${window.location.host}/ws/privatechat/${receiverId}/`
+    );
+
+    chatSocket.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    chatSocket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+
+      if (data.type === 'chat_message') {
+        appendMessage(data.message, data.sender, data.timestamp);
+      } else if (data.type === 'last_messages') {
+        data.messages.forEach(msg => {
+          appendMessage(msg.message, msg.sender, msg.timestamp);
+        });
+      } else {
+        console.warn("Unknown message type:", data);
       }
-      
-      // Fetch users from the backend
-      async function fetchUsers() {
-        try {
-          // In a real app, you would fetch this from your Django backend
-          const response = await fetch('/api/users/'); // Replace with your actual endpoint
-          users = await response.json();
-          
-          // For demo purposes, we'll simulate the response
-          users = [
-            { id: 1, username: "John Doe", email: "john@example.com", online: true, last_message: "Hey, how are you doing?", last_message_time: new Date(Date.now() - 3600000).toISOString() },
-            { id: 2, username: "Sarah Smith", email: "sarah@example.com", online: true, last_message: "Meeting at 2pm tomorrow", last_message_time: new Date(Date.now() - 86400000).toISOString() },
-            { id: 3, username: "Mike Johnson", email: "mike@example.com", online: false, last_message: "Please review the documents", last_message_time: new Date(Date.now() - 172800000).toISOString() },
-            { id: 4, username: "Emily Wilson", email: "emily@example.com", online: true, last_message: "Thanks for your help!", last_message_time: new Date(Date.now() - 259200000).toISOString() },
-            { id: 5, username: "David Brown", email: "david@example.com", online: false, last_message: "Let's catch up soon", last_message_time: new Date('2023-05-20').toISOString() },
-          ];
-          
-          // Initialize unread counts
-          users.forEach(user => {
-            unreadCounts[user.id] = 0;
-          });
-          
-          renderUserList(users);
-        } catch (error) {
-          console.error('Error fetching users:', error);
-          userList.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--muted-text);">Error loading users</div>';
-        }
+    };
+
+    chatSocket.onclose = () => {
+      console.error("WebSocket closed unexpectedly");
+    };
+
+    sendButton.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
       }
-      
-      // Render the user list
-      function renderUserList(usersToRender) {
-        userList.innerHTML = '';
-        
-        if (usersToRender.length === 0) {
-          userList.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--muted-text);">No users found</div>';
-          return;
-        }
-        
-        usersToRender.forEach(user => {
-          const userItem = document.createElement('div');
-          userItem.className = 'user-item';
-          if (currentChatId === user.id) userItem.classList.add('active');
-          
-          const unreadBadge = unreadCounts[user.id] > 0 ? 
-            `<div class="unread-badge">${unreadCounts[user.id]}</div>` : '';
-          
+    });
+
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      chatSocket.send(JSON.stringify({
+        type: "chat_message",  // Optional type for consistency
+        message: message,
+        sender: currentUser,
+        receiver: receiverUsername,
+      }));
+
+      messageInput.value = '';
+    }
+
+    function appendMessage(message, sender, timestamp) {
+      const isCurrentUser = sender === currentUser;
+
+      const messageContainer = document.createElement("div");
+      messageContainer.classList.add("chat-message", isCurrentUser ? "sent" : "received");
+
+      messageContainer.innerHTML = `
+        <div class="message-content">
+          <div class="message-text">${sanitize(message)}</div>
+          <div class="message-time">${formatTime(timestamp)}</div>
+        </div>
+      `;
+
+      chatMessages.appendChild(messageContainer);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sanitize(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+
+    function formatTime(timestamp) {
+      if (!timestamp) return '';
+      const date = new Date(timestamp);
+      if (isNaN(date)) return '';
+
+      const now = new Date();
+      const isToday = date.toDateString() === now.toDateString();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const isYesterday = date.toDateString() === yesterday.toDateString();
+
+      const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+      if (isToday) return `Today, ${time}`;
+      if (isYesterday) return `Yesterday, ${time}`;
+      return `${date.toLocaleDateString()}, ${time}`;
+    }
+
+    // Load user list
+    fetch("/api/users/")
+      .then(response => response.json())
+      .then(users => {
+        users.forEach(user => {
+          const userItem = document.createElement("div");
+          userItem.classList.add("user-item");
           userItem.innerHTML = `
-            <div class="user-avatar">${getInitials(user.username)}</div>
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
             <div class="user-info">
               <div class="user-name">${user.username}</div>
-              <div class="user-last-message">${user.last_message || ''}</div>
             </div>
-            <div class="user-time">${formatTime(user.last_message_time)}</div>
-            ${unreadBadge}
           `;
-          
-          userItem.addEventListener('click', () => selectUser(user));
+          userItem.addEventListener("click", () => openChat(user.username, user.id));
           userList.appendChild(userItem);
         });
-      }
-      
-      // Get initials from username
-      function getInitials(username) {
-        return username.split(' ').map(n => n[0]).join('').toUpperCase();
-      }
-      
-      // Select a user to chat with
-      async function selectUser(user) {
-        // Close any existing WebSocket connection
-        if (chatSocket) {
-          chatSocket.close();
-        }
-        
-        currentChatId = user.id;
-        currentChatUser = user;
-        currentChatName.textContent = user.username;
-        currentChatAvatar.textContent = getInitials(user.username);
-        currentChatStatus.innerHTML = user.online ? 
-          '<span class="status-indicator"></span> Online' : 
-          '<span class="status-indicator offline"></span> Offline';
-        
-        // Update URL hash for deep linking
-        window.location.hash = `user-${user.id}`;
-        
-        // Highlight selected user in sidebar
-        document.querySelectorAll('.user-item').forEach(item => {
-          item.classList.remove('active');
-        });
-        document.querySelectorAll('.user-item').forEach(item => {
-          if (item.querySelector('.user-name').textContent === user.username) {
-            item.classList.add('active');
-          }
-        });
-        
-        // Reset unread count for this user
-        unreadCounts[user.id] = 0;
-        renderUserList(users);
-        
-        // Enable input and button
-        messageInput.disabled = false;
-        sendButton.disabled = false;
-        messageInput.focus();
-        
-        // Hide "no chat selected" message
-        noChatSelected.style.display = 'none';
-        
-        // Clear chat container and show loading
-        chatContainer.innerHTML = '<div class="spinner"></div>';
-        
-        // Connect to WebSocket for this chat
-        connectWebSocket(user.id);
-        
-        // Close sidebar on mobile
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove('open');
-        }
-      }
-      
-      // Connect to WebSocket for private chat
-      function connectWebSocket(receiverId) {
-        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const wsPath = `/ws/privatechat/${receiverId}/`;
-        
-        chatSocket = new WebSocket(`${protocol}://${window.location.host}${wsPath}`);
-        
-        chatSocket.onopen = () => {
-          console.log('WebSocket connection established');
-          // The WebSocket will automatically load messages via the consumer
-        };
-        
-        chatSocket.onclose = () => {
-          console.log('WebSocket connection closed');
-        };
-        
-        chatSocket.onerror = (error) => {
-          console.error('WebSocket error:', error);
-        };
-        
-        chatSocket.onmessage = (e) => {
-          const data = JSON.parse(e.data);
-          addMessageToChat(data);
-        };
-      }
-      
-      // Setup event listeners
-      function setupEventListeners() {
-        // Search functionality
-        userSearch.addEventListener('input', (e) => {
-          const searchTerm = e.target.value.toLowerCase();
-          const filteredUsers = users.filter(user => 
-            user.username.toLowerCase().includes(searchTerm) || 
-            user.email.toLowerCase().includes(searchTerm)
-          );
-          renderUserList(filteredUsers);
-        });
-        
-        // Send message on button click
-        sendButton.addEventListener('click', sendMessage);
-        
-        // Send message on Enter key
-        messageInput.addEventListener('keyup', (e) => {
-          if (e.key === 'Enter') {
-            sendMessage();
-          }
-        });
-        
-        // Mobile menu toggle
-        mobileMenuButton.addEventListener('click', () => {
-          sidebar.classList.toggle('open');
-        });
-        
-        // Close modal
-        document.getElementById('modal-close').addEventListener('click', () => {
-          document.getElementById('modal').style.display = 'none';
-        });
-        
-        window.addEventListener('click', (event) => {
-          const modal = document.getElementById('modal');
-          if (event.target === modal) {
-            modal.style.display = 'none';
-          }
-        });
-        
-        // Handle window resize for mobile view
-        window.addEventListener('resize', () => {
-          if (window.innerWidth > 768) {
-            sidebar.classList.remove('open');
-          }
-        });
-      }
-      
-      // Send a message
-      function sendMessage() {
-        const message = messageInput.value.trim();
-        if (message !== '' && currentChatId && chatSocket) {
-          // Show sending state
-          const originalText = sendButtonText.textContent;
-          sendButtonText.textContent = 'Sending...';
-          sendButton.disabled = true;
-          
-          // Create message object
-          const messageData = {
-            message: message,
-            sender: currentUser.username,
-            sender_id: currentUser.id,
-            timestamp: new Date().toISOString()
-          };
-          
-          // Send via WebSocket
-          chatSocket.send(JSON.stringify(messageData));
-          
-          // Add to UI immediately (optimistic update)
-          addMessageToChat({
-            ...messageData,
-            sender_id: currentUser.id
-          });
-          
-          // Clear input
-          messageInput.value = '';
-          
-          // Reset button state
-          setTimeout(() => {
-            sendButtonText.textContent = originalText;
-            sendButton.disabled = false;
-            messageInput.focus();
-          }, 500);
-        }
-      }
-      
-      // Add a message to the chat UI
-      function addMessageToChat(data) {
-        // If this is the first message, clear the loading state
-        if (chatContainer.querySelector('.spinner') || chatContainer.querySelector('.no-chat-selected')) {
-          chatContainer.innerHTML = '';
-        }
-        
-        const isSent = data.sender_id === currentUser.id;
-        
-        const msgContainer = document.createElement('div');
-        msgContainer.className = `message-container ${isSent ? 'sent' : ''} new-message`;
-        
-        const msgBubble = document.createElement('div');
-        msgBubble.className = `message ${isSent ? 'sent' : ''}`;
-        msgBubble.onclick = () => showFullMessage(data.message);
-        
-        msgBubble.innerHTML = `
-          ${!isSent ? `<strong>${data.sender}</strong>` : ''}
-          <div class="message-content">${escapeHtml(data.message)}</div>
-          <div class="timestamp">${formatTime(data.timestamp)}</div>
-        `;
-        
-        msgContainer.appendChild(msgBubble);
-        chatContainer.appendChild(msgContainer);
-        
-        // Scroll to the new message
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-        
-        // If this is a received message and the chat is not active, increment unread count
-        if (!isSent && currentChatId !== data.sender_id) {
-          unreadCounts[data.sender_id] = (unreadCounts[data.sender_id] || 0) + 1;
-          renderUserList(users);
-        }
-      }
-      
-      // Format timestamp
-      function formatTime(timestamp) {
-        if (!timestamp) return '';
-        
-        const date = new Date(timestamp);
-        if (isNaN(date.getTime())) return '';
-        
-        const now = new Date();
-        const today = now.toDateString();
-        const yesterday = new Date(now.getTime() - 86400000).toDateString();
-        const options = { hour: 'numeric', minute: 'numeric', hour12: true };
-        
-        if (date.toDateString() === today) {
-          return `Today, ${date.toLocaleTimeString([], options)}`;
-        }
-        if (date.toDateString() === yesterday) {
-          return `Yesterday, ${date.toLocaleTimeString([], options)}`;
-        }
-        
-        return `${date.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString([], options)}`;
-      }
-      
-      // Show full message in modal
-      function showFullMessage(message) {
-        document.getElementById('modal-message').textContent = message;
-        document.getElementById('modal').style.display = 'flex';
-      }
-      
-      // Escape HTML to prevent XSS
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-      
-      // Initialize the app when DOM is loaded
-      document.addEventListener('DOMContentLoaded', init);
-    </script>
-  </body>
+      })
+      .catch(error => console.error("Error fetching user list:", error));
+
+    function openChat(username, userId) {
+      // Stub: redirect or update state to load the new chat
+      console.log("Open chat with", username);
+      window.location.href = `/chat/${userId}/`; // or use AJAX/state update
+    }
+  });
+</script>
+
+
+</body>
+
 </html>

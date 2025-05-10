@@ -8,5 +8,5 @@ urlpatterns = [
     path("", LoginView.as_view(template_name="app/LoginPage.htm"), name="login-user"),
     path("auth/logout/", LogoutView.as_view(), name="logout-user"),
     path("chat/<int:user_id>/", views.private_chat_view, name="private-chat"),
-
+    path("api/users/" , views.user_list , name="user-list"),
 ]

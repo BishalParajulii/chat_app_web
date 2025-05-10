@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 
 
 def chatPage(request, *args, **kwargs):
@@ -24,8 +25,18 @@ def users_list(request):
 def private_chat_view(request, user_id):
     other_user = get_object_or_404(User, id=user_id)
     return render(request, 'app/private_chat.htm', {
-        'other_user': other_user,
-        'sender_id': request.user.id,  # ✅ Pass sender_id to template
-        'request': request ,          # ✅ Optional: if you're using {{ request.user.username }} in JS
-        'sender' : request.user.username
+        'other_user': other_user,       # ✅ Pass other_user to template
+        'sender_id': request.user.id,   # ✅ Pass sender_id to template
+        'sender': request.user.username, # ✅ Pass sender username
+        'receiver': other_user,         # ✅ Pass receiver user for easy access in JS
+        'request': request,             # ✅ Optional: if you're using {{ request.user.username }} in JS
     })
+    
+
+
+def user_list(request):
+    current_user = request.user
+    users = User.objects.exclude(id=current_user.id)
+    user_data = [{"username": user.username, "id": user.id} for user in users]
+    
+    return JsonResponse(user_data, safe=False)
