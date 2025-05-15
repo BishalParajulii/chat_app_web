@@ -107,11 +107,14 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        
+        messages = await self.get_last_messages()
 
         # Send last messages to the WebSocket client
-        messages = await self.get_last_messages()
-        for msg in messages:
-            await self.send(text_data=json.dumps(msg))
+        await self.send(text_data=json.dumps({
+            "type": "last_messages",
+            "messages": messages
+        }))
 
     async def disconnect(self, close_code):
         # Leave room group

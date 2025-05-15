@@ -1662,7 +1662,7 @@
       <button class="mobile-menu-button" id="mobile-menu-button">
         <i class="fas fa-bars"></i>
       </button>
-      <div class="sidebar-title">Chats</div>
+      <div class="sidebar-title"> <a href="index.htm" style="color" : yellow;>  ← </a> Chats</div>
       <div>
         <i class="fas fa-ellipsis-vertical"></i>
       </div>
@@ -1736,9 +1736,12 @@
     chatSocket.onopen = () => {
       console.log("WebSocket connected");
     };
+    
+
 
     chatSocket.onmessage = function (event) {
       const data = JSON.parse(event.data);
+      console.log("Received WebSocket data:", data);
 
       if (data.type === 'chat_message') {
         appendMessage(data.message, data.sender, data.timestamp);
@@ -1841,7 +1844,7 @@
     function openChat(username, userId) {
       // Stub: redirect or update state to load the new chat
       console.log("Open chat with", username);
-      window.location.href = `/chat/${userId}/`; // or use AJAX/state update
+      window.location.href = `/chat/${userId}/`;
     }
   });
 </script>
