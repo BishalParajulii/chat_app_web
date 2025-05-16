@@ -143,7 +143,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         )
     async def send_message(self, event):
         await self.send(text_data=json.dumps({
-            "type": "chat_message",  # 👈 Required for frontend to recognize
+            "type": "chat_message",  
             "message": event["message"],
             "sender": event["sender"],
             "sender_id": event["sender_id"],
@@ -162,6 +162,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 {
                     "sender": msg.sender.username,
                     "message": msg.message,
+                    # 'file_url' : msg.file.url if msg.file else None,
                     "timestamp": msg.timestamp.isoformat(),
                     "sender_id": msg.sender.id
                 }
@@ -174,9 +175,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     
     @sync_to_async
     def save_message(self, sender, receiver, message):
-        # Save the new message to the database
         Message.objects.create(
             sender=sender,
             receiver=receiver,
             message=message
+            # file=file
         )
